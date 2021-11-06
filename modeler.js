@@ -292,11 +292,16 @@ let camera
 const cellIdToMesh = {};
 
 
+let deleteMode = false;
+
+
 let control_create = () => {
+    deleteMode = false;
     changeBlock()
 }
 
 let control_delete = () => {
+    deleteMode = true;
     currentVoxel = 0;
 }
 
@@ -394,12 +399,14 @@ window.onload = () => {
     canvas.addEventListener('pointerdown', (event) => {
         event.preventDefault();
 
-        // Left click to create
-        if(event.which == 1)
-            control_create()
-        // Right click to delete
-        else
+
+        // Right click / delete mode to delete
+        if (event.which == 3 || deleteMode)
             control_delete()
+        // Left click to create
+        else if(event.which == 1)
+            control_create()
+        
         
         recordStartPosition(event);
         window.addEventListener('pointermove', recordMovement);
