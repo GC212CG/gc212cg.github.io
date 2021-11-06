@@ -402,10 +402,13 @@ window.onload = () => {
 
         // Right click / delete mode to delete
         if (event.which == 3 || deleteMode)
-            control_delete()
+            currentVoxel = 0;
         // Left click to create
         else if(event.which == 1)
-            control_create()
+            changeBlock()
+
+            
+            
         
         
         recordStartPosition(event);
