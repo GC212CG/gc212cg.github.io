@@ -2,125 +2,97 @@ import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threej
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
 import {OBJExporter} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/exporters/OBJExporter.js';
 import * as Shape from './resources/objects.js'
-let textureSrc = './resources/texture.png'
 
-class World {
+// Palette size
+const paletteSize = 32;
+
+// Texture Settings
+const textureSrc = './resources/texture.png'
+const numberOfTexture = 6
+const brickTextureSize = 16;
+const brickTextureFileWidth = 112;
+const brickTextureFileHeight = 64;
+
+
+// Palette class
+//  - Set brick state in certain location
+//  - Get brick state in certain location
+//  - Picking
+//  - Generate geometric informations of each bricks in palette
+class Palette {
+
+    // Constructor
     constructor(options) {
-        this.cellSize = options.cellSize;
-        this.tileSize = options.tileSize;
-        this.tileTextureWidth = options.tileTextureWidth;
-        this.tileTextureHeight = options.tileTextureHeight;
-        const {cellSize} = this;
-        this.cellSliceSize = cellSize * cellSize;
-        this.cells = {};
-    }
+        this.paletteSize = options.paletteSize;
+        this.brickTextureSize = options.brickTextureSize;
+        this.brickTextureFileWidth = options.brickTextureFileWidth;
+        this.brickTextureFileHeight = options.brickTextureFileHeight;
+        const {paletteSize} = this;
+        this.cell = [];
 
-
-    computeVoxelOffset(x, y, z) {
-        const {cellSize, cellSliceSize} = this;
-        const voxelX = THREE.MathUtils.euclideanModulo(x, cellSize) | 0;
-        const voxelY = THREE.MathUtils.euclideanModulo(y, cellSize) | 0;
-        const voxelZ = THREE.MathUtils.euclideanModulo(z, cellSize) | 0;
-        return voxelY * cellSliceSize +
-                voxelZ * cellSize +
-                voxelX;
-    }
-
-
-    computeCellId(x, y, z) {
-        const {cellSize} = this;
-        const cellX = Math.floor(x / cellSize);
-        const cellY = Math.floor(y / cellSize);
-        const cellZ = Math.floor(z / cellSize);
-        return `${cellX},${cellY},${cellZ}`;
-    }
-
-
-
-
-
-
-    // Add block to world
-    // x, y, z, texture
-    setVoxel(x, y, z, v, addCell = true) {
-
-        let cell = this.getCellForVoxel(x, y, z);
-
-        if (!cell) {
-            if (!addCell) {
-                return;
+        // Initialize brick world(palette) data
+        for(let i=0; i < paletteSize; i++){
+            this.cell[i] = []
+            for(let j=0; j < paletteSize; j++){
+                this.cell[i][j] = []
+                for(let k=0; k < paletteSize; k++){
+                    this.cell[i][j][k] = 0
+                }
             }
-            cell = this.addCellForVoxel(x, y, z);
+        }        
+    }
+
+
+    // Add block to palette
+    // setBrickState( x, y, z, textureIdx )
+    setBrickState(x, y, z, v) {
+        this.cell[x][y][z] = v
+    }
+
+
+    // Get texture index in certain coordinate
+    getBrickState(x, y, z) {
+        // return brick state what is on the palette
+        if(paletteSize > x && x >= 0){
+            if(paletteSize > y && y >= 0){
+                if(paletteSize > z && z >= 0){
+                    return this.cell[x][y][z]
+                }
+            }
         }
-        const voxelOffset = this.computeVoxelOffset(x, y, z);
-        cell[voxelOffset] = v;
-
     }
 
-
-
-    addCellForVoxel(x, y, z) {
-        const cellId = this.computeCellId(x, y, z);
-        let cell = this.cells[cellId];
-        if (!cell) {
-            const {cellSize} = this;
-            cell = new Uint8Array(cellSize * cellSize * cellSize);
-            this.cells[cellId] = cell;
-        }
-        return cell;
-    }
-
-
-    getCellForVoxel(x, y, z) {
-        return this.cells[this.computeCellId(x, y, z)];
-    }
-
-
-
-    getVoxel(x, y, z) {
-        const cell = this.getCellForVoxel(x, y, z);
-        if (!cell) {
-            return 0;
-        }
-        const voxelOffset = this.computeVoxelOffset(x, y, z);
-        return cell[voxelOffset];
-    }
-
-
-
-    generateGeometryDataForCell(cellX, cellY, cellZ) {
-        const {cellSize, tileSize, tileTextureWidth, tileTextureHeight} = this;
+    
+    // Add brick with geometric data in object.js(Shape) and texture file
+    generateGeometryData() {
+        const {paletteSize, brickTextureSize, brickTextureFileWidth, brickTextureFileHeight} = this;
         const positions = [];
         const normals = [];
         const uvs = [];
         const indices = [];
-        const startX = cellX * cellSize;
-        const startY = cellY * cellSize;
-        const startZ = cellZ * cellSize;
 
-        for (let y = 0; y < cellSize; ++y) {
-            const voxelY = startY + y;
-            for (let z = 0; z < cellSize; ++z) {
-                const voxelZ = startZ + z;
-                for (let x = 0; x < cellSize; ++x) {
-                    const voxelX = startX + x;
-                    const voxel = this.getVoxel(voxelX, voxelY, voxelZ);
-                    if (voxel) {
-                        // voxel 0 is sky (empty) so for UVs we start at 0
-                        let uvVoxel = voxel - 1;
+        for (let y = 0; y < paletteSize; ++y) {
+            for (let z = 0; z < paletteSize; ++z) {
+                for (let x = 0; x < paletteSize; ++x) {
+                    
+                    // textureState == 0 : Empty
+                    // textureState != 0 : Color Textures
+                    const textureState = this.getBrickState(x, y, z);
+                    
+                    if (textureState != 0) {
                         
-                        // 0: bottom block
-                        if(uvVoxel != 0){
-                            uvVoxel = (uvVoxel - 1) % 5 + 1
+                        // Texture; Brick 0 is empty
+                        let uvBrick = textureState - 1;
+                        
+                        // Set texture index
+                        if(uvBrick != 0){
+                            uvBrick = (uvBrick - 1) % numberOfTexture + 1
                         }
 
-
-                        
-                        
                         // Shape control
                         let shape = Shape.facesCube;
                         
-                        switch(Math.floor((voxel - 2) / 5)){
+                        switch(Math.floor((textureState - 2) / numberOfTexture)){
                             case 0: shape = Shape.facesCube; break;
 
                             case 1: shape = Shape.facesHypotenuse1; break;
@@ -144,8 +116,8 @@ class World {
                                 positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
                                 normals.push(...dir);
                                 uvs.push(
-                                    (uvVoxel +   uv[0]) * tileSize / tileTextureWidth,
-                                1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);
+                                    (uvBrick +   uv[0]) * brickTextureSize / brickTextureFileWidth,
+                                1 - (uvRow + 1 - uv[1]) * brickTextureSize / brickTextureFileHeight);
                             }
                             indices.push(
                                 ndx, ndx + 1, ndx + 2,
@@ -168,11 +140,8 @@ class World {
     }
 
 
-
-
-    // from
-    // http://www.cse.chalmers.se/edu/year/2010/course/TDA361/grid.pdf
-    intersectRay(start, end) {
+    // Picking with using ray cast 
+    rayCastPicking(start, end) {
         let dx = end.x - start.x;
         let dy = end.y - start.y;
         let dz = end.z - start.z;
@@ -209,7 +178,7 @@ class World {
 
         // main loop along raycast vector
         while (t <= len) {
-            const voxel = this.getVoxel(ix, iy, iz);
+            const voxel = this.getBrickState(ix, iy, iz);
             
             if (voxel) {
                 return {
@@ -263,67 +232,102 @@ class World {
 
 
 
+//////////////////////////////////////////////////////
+//                                                  //
+//              Update Scene's Geometry             //
+//      (Scene update with using Palette class)     //
+//                                                  //
+//////////////////////////////////////////////////////
 
-const cellSize = 64;
-const tileSize = 16;
-const tileTextureWidth = 256;
-const tileTextureHeight = 64;
+let mesh;
+
+function updateGeometry(x, y, z) {
+    const cellX = Math.floor(x / paletteSize);
+    const cellY = Math.floor(y / paletteSize);
+    const cellZ = Math.floor(z / paletteSize);
+    
+    const geometry = mesh ? mesh.geometry : new THREE.BufferGeometry();
+
+    const {positions, normals, uvs, indices} = palette.generateGeometryData();
 
 
+    const positionNumComponents = 3;
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
+    const normalNumComponents = 3;
+    geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
+    const uvNumComponents = 2;
+    geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), uvNumComponents));
+    geometry.setIndex(indices);
+    geometry.computeBoundingSphere();
+
+
+    if (!mesh) {
+        mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        mesh.position.set(cellX * paletteSize, cellY * paletteSize, cellZ * paletteSize);
+    }
+}
+
+
+
+
+
+//////////////////////////////////////////////////////
+//                                                  //
+//                      Main Code                   //
+//                                                  //
+//////////////////////////////////////////////////////
 let loader
 let texture
-
-let world
-let material
-
-let per_view = 1;
-
-let selectedColor = 1;
-let selectedShape = 1;
-let currentVoxel = 1;
-
 let canvas
 let renderer
-
+let palette
+let material
 let controls
 let scene
 let camera
 
-const cellIdToMesh = {};
+let selectedColor = 1;
+let selectedShape = 1;
+let currentBrickShape = 1;
 
+let mousedownCoordinate = 0
 
 let deleteMode = false;
 
 
+// Set functions to export globally(globalThis) 
+// for Flutter framework
 let control_create = () => {
     deleteMode = false;
-    changeBlock()
+    changeBrick()
 }
 
 let control_delete = () => {
     deleteMode = true;
-    currentVoxel = 0;
+    currentBrickShape = 0;
 }
 
 let control_selectColor = (index) => {
     selectedColor = index
-    changeBlock()
+    changeBrick()
 }
 
 let control_selectShape = (index) => {
     selectedShape = index
-    changeBlock()
+    changeBrick()
 }
 
+// Export obj file
 let control_getObjCode = () => {
-    deletePannel()
-    updateVoxelGeometry(1, 1, 1);
-    
-    let exporter = new OBJExporter();
-    let objCode = exporter.parse(scene);
 
-    addPannel()
-    updateVoxelGeometry(1, 1, 1);
+    removeBottomPlate()
+    updateGeometry(1, 1, 1);
+    
+    let objCode = objExportFromScene(scene)
+
+    createBottomPlate()
+    updateGeometry(1, 1, 1);
 
     return objCode
 }
@@ -331,43 +335,47 @@ let control_getObjCode = () => {
 // Top View
 let camera_topView = () => {
     // -0.01 for set camera correctly
-    camera.position.set(cellSize/2, cellSize/2, cellSize/2-0.001);
-    controls.target.set(cellSize/2, 0, cellSize/2);
-    requestRenderIfNotRequested();
+    camera.position.set(paletteSize/2, paletteSize/2, paletteSize/2-0.001);
+    controls.target.set(paletteSize/2, 0, paletteSize/2);
+    requestRender();
 }
 
 // Front View
 let camera_frontView = () => {
-    camera.position.set(cellSize/2, 0, -cellSize/4);
-    controls.target.set(cellSize/2, 0, 0);
-    requestRenderIfNotRequested();
+    camera.position.set(paletteSize/2, 0, -paletteSize/4);
+    controls.target.set(paletteSize/2, 0, 0);
+    requestRender();
 }
-
 
 // Right Side View
 let camera_rightSideView = () => {
-    camera.position.set(-cellSize/4, 0, cellSize/2);
-    controls.target.set(0, 0, cellSize/2);
-    requestRenderIfNotRequested();
+    camera.position.set(-paletteSize/4, 0, paletteSize/2);
+    controls.target.set(0, 0, paletteSize/2);
+    requestRender();
 }
 
+// Perspective View
 let camera_perspectiveView = () => {
     // Camera Position
-    camera.position.set(cellSize*0.45, 4.8 , cellSize*0.45);
+    camera.position.set(paletteSize*0.4, 6.0 , paletteSize*0.4);
     // Camera LookAt
-    controls.target.set(cellSize*0.5, 0, cellSize*0.5);
-    requestRenderIfNotRequested();
+    controls.target.set(paletteSize*0.5, 0, paletteSize*0.5);
+    requestRender();
 }
 
 
 
+
+
+// Initialize when Web app was started
 window.onload = () => {
 
     // Initialize variables
-    canvas = document.querySelector('#c');
+    canvas = document.getElementById('c');
     renderer = new THREE.WebGLRenderer({canvas});
 
-    
+
+    // Set global function variables for Flutter
     globalThis.global_control_create = control_create
     globalThis.global_control_delete = control_delete
     globalThis.global_control_selectColor = control_selectColor
@@ -380,68 +388,35 @@ window.onload = () => {
     globalThis.global_camera_perspectiveView = camera_perspectiveView
     
 
-    let fov = 75;
-    const aspect = 2;  // the canvas default
-    const near = 0.1;
-    const far = 1000;
-
     // Camera setting
+    const fov = 75;
+    const aspect = 2;
+    const near = 0.1;
+    const far = 100;
+
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     controls = new OrbitControls(camera, canvas);
     controls.update();
     camera_perspectiveView()
 
+
+    // Scene setting
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 0xF3FBFF );
 
-    changeBlock()
 
-    canvas.addEventListener('pointerdown', (event) => {
-        event.preventDefault();
-
-
-        // Right click / delete mode to delete
-        if (event.which == 3 || deleteMode)
-            currentVoxel = 0;
-        // Left click to create
-        else if(event.which == 1)
-            changeBlock()
-
-            
-            
-        
-        
-        recordStartPosition(event);
-        window.addEventListener('pointermove', recordMovement);
-        window.addEventListener('pointerup', placeVoxelIfNoMovement);
-    }, {passive: false});
-
-    canvas.addEventListener('touchstart', (event) => {
-        // prevent scrolling
-        event.preventDefault();
-    }, {passive: false});
-
-    controls.addEventListener('change', requestRenderIfNotRequested);
-    window.addEventListener('resize', requestRenderIfNotRequested);
+    // Initialize block shape and color
+    changeBrick()
 
 
-    // =============================================================================
-    // =============================================================================
-    // =============================================================================
-
+    // Load texture
     loader = new THREE.TextureLoader();
     texture = loader.load(textureSrc, render);
     
-    
-    // Create world
-    world = new World({
-        cellSize,
-        tileSize,
-        tileTextureWidth,
-        tileTextureHeight,
-    });
-
     // Add texture to blocks
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+
     material = new THREE.MeshLambertMaterial({
         map: texture,
         side: THREE.DoubleSide,
@@ -449,8 +424,6 @@ window.onload = () => {
         transparent: true,
     });
     
-    texture.magFilter = THREE.NearestFilter;
-    texture.minFilter = THREE.NearestFilter;
     
     // Light
     addLight(0, 10,  -30, 0.9);
@@ -459,11 +432,60 @@ window.onload = () => {
     addLight(30, 10, 0, 0.7);
     addLight(0, 10,  30, 0.6);
     
-    // Create(add) pannel to scene
-    addPannel()
-    updateVoxelGeometry(1, 1, 1);  // 0,0,0 will generate
 
-    renderRequested = false;
+
+    
+    // Add listener for mouse events (Place / Remove bricks)
+    canvas.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+
+        // Right click / delete mode to delete
+        if (event.button == 2 || deleteMode)
+            currentBrickShape = 0;
+        // Left click to create
+        else if(event.button == 0)
+            changeBrick()
+        
+        // Check mouse was moved between mousedown and mouseup event
+        // Record mouse position
+        mousedownCoordinate = event.clientX + event.clientY
+        mousedownCoordinate = mousedownCoordinate * mousedownCoordinate
+    });
+
+    window.addEventListener('pointerup', (event) => {
+        // Check mouse was moved between mousedown and mouseup event
+        let mouseupCoordinate = event.clientX + event.clientY
+        mouseupCoordinate = mouseupCoordinate * mouseupCoordinate
+        // Tolerate error to ignore a litte bit moved
+        const error = 2000
+        if(mouseupCoordinate + error >= mousedownCoordinate && mousedownCoordinate >= mouseupCoordinate - error)
+            placeBrick(event);
+    });
+
+    // Prevent scrolling
+    canvas.addEventListener('touchstart', (event) => {
+        event.preventDefault();
+    }, {passive: false});
+
+    // render if window or control has been mutated
+    controls.addEventListener('change', requestRender);
+    window.addEventListener('resize', requestRender);
+
+
+
+
+    // Create Palette
+    palette = new Palette({
+        paletteSize,
+        brickTextureSize,
+        brickTextureFileWidth,
+        brickTextureFileHeight,
+    });
+    
+    // Create(add) pannel to scene
+    createBottomPlate()
+    updateGeometry(1, 1, 1);  // 0,0,0 will generate
+
     render();
 
 }
@@ -471,184 +493,83 @@ window.onload = () => {
 
 
 
-// Change block by selectecd value (selectedColor, selectedShape)
-function changeBlock() {
-    selectedColor = Number.parseInt(selectedColor)
-    selectedShape = Number.parseInt(selectedShape)
 
-    currentVoxel = selectedColor + (selectedShape - 1) * 5
-    currentVoxel += 1
-}
+//////////////////////////////////////////////////////
+//                                                  //
+//                   Brick Controls                 //
+//                                                  //
+//////////////////////////////////////////////////////
 
-
-// Create(add) pannel to scene
-function addPannel() {
-    for(let i = 0; i < cellSize; i++)
-        for(let j = 0; j < cellSize; j++)
-            world.setVoxel(i, 0, j, 1);
-}
-
-// Delete(remove) pannel to scene
-function deletePannel() {
-    for(let i = 0; i < cellSize; i++)
-        for(let j = 0; j < cellSize; j++)
-            world.setVoxel(i, 0, j, 0);
-}
-
-
-
-
-
-const mouse = {
-    x: 0,
-    y: 0,
-};
-
-function recordStartPosition(event) {
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
-    mouse.moveX = 0;
-    mouse.moveY = 0;
-}
-
-function recordMovement(event) {
-    mouse.moveX += Math.abs(mouse.x - event.clientX);
-    mouse.moveY += Math.abs(mouse.y - event.clientY);
-}
-
-
-
-
-
-function placeVoxelIfNoMovement(event) {
-    if (mouse.moveX < 5 && mouse.moveY < 5) {
-        placeVoxel(event);
+// Place brick with ray cast picking
+function placeBrick(event) {
+    
+    const rect = canvas.getBoundingClientRect();
+    const pos = {
+        x: (event.clientX - rect.left) * canvas.width  / rect.width,
+        y: (event.clientY - rect.top ) * canvas.height / rect.height,
     }
-    window.removeEventListener('pointermove', recordMovement);
-    window.removeEventListener('pointerup', placeVoxelIfNoMovement);
-}
 
-
-
-
-
-function placeVoxel(event) {
-    const pos = getCanvasRelativePosition(event);
     const x = (pos.x / canvas.width ) *  2 - 1;
-    const y = (pos.y / canvas.height) * -2 + 1;  // note we flip Y
+    const y = (pos.y / canvas.height) * -2 + 1;  // flip Y
 
     const start = new THREE.Vector3();
     const end = new THREE.Vector3();
     start.setFromMatrixPosition(camera.matrixWorld);
     end.set(x, y, 1).unproject(camera);
 
-    const intersection = world.intersectRay(start, end);
+    const intersection = palette.rayCastPicking(start, end);
     if (intersection) {
 
-        const voxelId = event.shiftKey ? 0 : currentVoxel;
-        // the intersection point is on the face. That means
-        // the math imprecision could put us on either side of the face.
-        // so go half a normal into the voxel if removing (currentVoxel = 0)
-        // our out of the voxel if adding (currentVoxel  > 0)
         const pos = intersection.position.map((v, ndx) => {
-            return v + intersection.normal[ndx] * (voxelId > 0 ? 0.5 : -0.5);
+            return v + intersection.normal[ndx] * (currentBrickShape > 0 ? 0.5 : -0.5);
         });
 
-
-        // 맨 밑바닥 블록 생성/제거 기능 제한
+        // Prevent deleting bottom of palette
         if(pos[1] > 1){
-            world.setVoxel(...pos, voxelId);
-            updateVoxelGeometry(...pos);
-            requestRenderIfNotRequested();
-        }
-        
-    }
-}
-
-
-
-
-
-function updateVoxelGeometry(x, y, z) {
-    const updatedCellIds = {};
-    for (const offset of neighborOffsets) {
-        const ox = x + offset[0];
-        const oy = y + offset[1];
-        const oz = z + offset[2];
-        const cellId = world.computeCellId(ox, oy, oz);
-        if (!updatedCellIds[cellId]) {
-            updatedCellIds[cellId] = true;
-            updateCellGeometry(ox, oy, oz);
+            palette.setBrickState(Math.floor(pos[0]), Math.floor(pos[1]), Math.floor(pos[2]), currentBrickShape);
+            updateGeometry(Math.floor(pos[0]), Math.floor(pos[1]), Math.floor(pos[2]));
+            requestRender();
         }
     }
 }
 
 
+// Change block by selectecd value (selectedColor, selectedShape)
+function changeBrick() {
+    selectedColor = Number.parseInt(selectedColor)
+    selectedShape = Number.parseInt(selectedShape)
 
-function updateCellGeometry(x, y, z) {
-    const cellX = Math.floor(x / cellSize);
-    const cellY = Math.floor(y / cellSize);
-    const cellZ = Math.floor(z / cellSize);
-    const cellId = world.computeCellId(x, y, z);
-    let mesh = cellIdToMesh[cellId];
-    const geometry = mesh ? mesh.geometry : new THREE.BufferGeometry();
-
-    const {positions, normals, uvs, indices} = world.generateGeometryDataForCell(cellX, cellY, cellZ);
-    const positionNumComponents = 3;
-    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
-    const normalNumComponents = 3;
-    geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
-    const uvNumComponents = 2;
-    geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), uvNumComponents));
-    geometry.setIndex(indices);
-    geometry.computeBoundingSphere();
-
-    if (!mesh) {
-        mesh = new THREE.Mesh(geometry, material);
-        mesh.name = cellId;
-        cellIdToMesh[cellId] = mesh;
-        scene.add(mesh);
-        mesh.position.set(cellX * cellSize, cellY * cellSize, cellZ * cellSize);
-    }
+    currentBrickShape = selectedColor + (selectedShape - 1) * numberOfTexture
+    currentBrickShape += 1
 }
 
-const neighborOffsets = [
-    [ 0,  0,  0], // self
-    [-1,  0,  0], // left
-    [ 1,  0,  0], // right
-    [ 0, -1,  0], // down
-    [ 0,  1,  0], // up
-    [ 0,  0, -1], // back
-    [ 0,  0,  1], // front
-];
+
+// Create(add) pannel to scene
+function createBottomPlate() {
+    for(let i = 0; i < paletteSize; i++)
+        for(let j = 0; j < paletteSize; j++)
+            palette.setBrickState(i, 0, j, 1);
+}
 
 
-
-
-
-
-
-
-function getCanvasRelativePosition(event) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-        x: (event.clientX - rect.left) * canvas.width  / rect.width,
-        y: (event.clientY - rect.top ) * canvas.height / rect.height,
-    };
+// Delete(remove) pannel to scene
+function removeBottomPlate() {
+    for(let i = 0; i < paletteSize; i++)
+        for(let j = 0; j < paletteSize; j++)
+            palette.setBrickState(i, 0, j, 0);
 }
 
 
 
 
 
+//////////////////////////////////////////////////////
+//                                                  //
+//                    Light Control                 //
+//                                                  //
+//////////////////////////////////////////////////////
 
-
-
-
-
-
-
-
+// Lighting
 function addLight(x, y, z, intensity) {
     const color = 0xFFFFFF;
     const light = new THREE.DirectionalLight(color, intensity);
@@ -660,16 +581,30 @@ function addLight(x, y, z, intensity) {
 
 
 
+//////////////////////////////////////////////////////
+//                                                  //
+//                   Obj Exporter                   //
+//                                                  //
+//////////////////////////////////////////////////////
+function objExportFromScene(targetScene) {
+    let objCode = (new OBJExporter()).parse(targetScene);
+    return objCode
+}
 
 
 
-let renderRequested = false;
 
+
+//////////////////////////////////////////////////////
+//                                                  //
+//                     Renderer                     //
+//                                                  //
+//////////////////////////////////////////////////////
+
+// Initial render function
 function render() {
 
-    renderRequested = undefined;
-
-    if (resizeRendererToDisplaySize(renderer)) {
+    if (isDisplaySizeChanged(renderer)) {
         const canvas = renderer.domElement;
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
@@ -684,28 +619,25 @@ function render() {
 }
 
 
-
-function resizeRendererToDisplaySize(renderer) {
+// React window resize event
+function isDisplaySizeChanged(renderer) {
 
     const canvas = renderer.domElement;
+
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
-    const needResize = canvas.width !== width || canvas.height !== height;
+    const isResized = canvas.width !== width || canvas.height !== height;
     
-    if (needResize) {
+    if (isResized) {
         renderer.setSize(width, height, false);
     }
     
-    return needResize;
+    return isResized;
 }
 
 
-
-function requestRenderIfNotRequested() {
-    if (!renderRequested) {
-        renderRequested = true;
-        requestAnimationFrame(render);
-    }
+// Render with animation frame
+function requestRender() {
+    requestAnimationFrame(render);
 }
-
 

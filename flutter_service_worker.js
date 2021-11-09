@@ -3,17 +3,17 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "version.json": "fd16918dbbc2a9bb28dd3eace52edbce",
+  "version.json": "f44df257560a783b8b0cfcc4c85f128f",
 "favicon.ico": "10deffee382234953650fc6aa92675d3",
-"modeler.js": "afabf7a06874a35df555112f6afcea3b",
-"index.html": "5c52e32dd220acb64503e77486b26f05",
-"/": "5c52e32dd220acb64503e77486b26f05",
-"main.dart.js": "9f47de80807bde79f76e611cae6e5e43",
+"modeler.js": "02904c43bea693c8ccb7ee0faa9fdaf5",
+"index.html": "3693bbfd7e05877a994a76e1dbf2b846",
+"/": "3693bbfd7e05877a994a76e1dbf2b846",
+"main.dart.js": "45f50759bd5068d71d6e5d2424a71ecf",
 "resources/three.module.js": "6ea25851832631ed2fbd488d2b8c62bf",
 "resources/three.min.js": "dfbc933c9fd763623def46d192779c41",
 "resources/three.js": "bee1448edad8a0d1748b1bf6527d4356",
 "resources/objects.js": "0be9a017ba7052865a01de594e2bf1c7",
-"resources/texture.png": "3239a356fcdd47c920024ae6838b2d0b",
+"resources/texture.png": "3404cd7983d3759512590a681cf9098b",
 "resources/OrbitControls.js": "4ba26deb81ec321e108ca0bef4bd57df",
 "resources/OBJExporter.js": "1d6ee30150524222ed302cdc63a625fb",
 "icons/Icon-192.png": "c611deeeff934adaead7ea9de49a72a1",

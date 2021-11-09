@@ -35315,9 +35315,9 @@ bf(){this.bL()
 G.UW().b6(0,new U.a2I(this),t.P)},
 gm5(){var s=this.fr
 return s==null?H.h(H.x("toolbarHeight")):s},
-V(a3,a4){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d=this,c=null,b="logo.png",a="BrickCraft",a0="nanum",a1=t.w,a2=a4.a6(a1).f.a.a<750
-d.go=a2
-d.fr=a2?210:120
+V(a2,a3){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d=this,c=null,b="BrickCraft",a="nanum",a0=t.w,a1=a3.a6(a0).f.a.a<750
+d.go=a1
+d.fr=a1?210:120
 s=T.eT(c,c,20)
 r=d.f
 q=K.c2(25)
@@ -35342,40 +35342,40 @@ n=C.V.i(0,600)
 n.toString
 m=H.a([s,new T.cU(C.bc,q,c),new T.cU(C.bc,o,c),new T.cU(C.bc,k,c),new T.cU(C.bc,D.ea(c,V.jo(M.c9(c,T.cJ(H.a([L.Sk(C.zH,n,40)],p),C.U,C.M),c,c,75,c,c,75),r,new X.cc(m,C.p)),C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2u(d),new U.a2v(d),c,c,c),c)],p)
 if(!d.go)m.push(d.a_x())
-if(!d.go){a2=C.V.i(0,300)
-a2.toString
-m.push(new T.cU(C.iG,M.c9(c,c,a2,c,60,c,c,1),c))}if(!d.go){a2=d.ch
+if(!d.go){a1=C.V.i(0,300)
+a1.toString
+m.push(new T.cU(C.iG,M.c9(c,c,a1,c,60,c,c,1),c))}if(!d.go){a1=d.ch
 s=K.c2(25)
 r=K.c2(25)
-m.push(new T.cU(C.bc,V.jo(M.c9(c,T.m0(C.bH,H.a([T.zW(K.c2(25),U.Br(c,new L.hR("assets/viewpoint.png"))),T.iw(0,T.r3(H.a([T.Qn(D.ea(c,c,C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2w(d),new U.a2x(d),c,c,c),2),T.Qn(T.cJ(H.a([T.Qn(D.ea(c,c,C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2y(d),new U.a2k(d),c,c,c),1),T.Qn(D.ea(c,c,C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2l(d),new U.a2m(d),c,c,c),1)],p),C.aF,C.M),3)],p),C.bb,C.U),c,c,0,0,0,c)],p),C.bl),c,new S.cQ(C.j,c,c,r,c,c,C.N),75,c,c,75),a2,new X.cc(s,C.p)),c))}a2=C.V.i(0,300)
-a2.toString
-m.push(new T.cU(C.iG,M.c9(c,c,a2,c,60,c,c,1),c))
-a2=d.Q
+m.push(new T.cU(C.bc,V.jo(M.c9(c,T.m0(C.bH,H.a([T.zW(K.c2(25),U.Br(c,new L.hR("assets/viewpoint.png"))),T.iw(0,T.r3(H.a([T.Qn(D.ea(c,c,C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2w(d),new U.a2x(d),c,c,c),2),T.Qn(T.cJ(H.a([T.Qn(D.ea(c,c,C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2y(d),new U.a2k(d),c,c,c),1),T.Qn(D.ea(c,c,C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2l(d),new U.a2m(d),c,c,c),1)],p),C.aF,C.M),3)],p),C.bb,C.U),c,c,0,0,0,c)],p),C.bl),c,new S.cQ(C.j,c,c,r,c,c,C.N),75,c,c,75),a1,new X.cc(s,C.p)),c))}a1=C.V.i(0,300)
+a1.toString
+m.push(new T.cU(C.iG,M.c9(c,c,a1,c,60,c,c,1),c))
+a1=d.Q
 s=K.c2(25)
 r=C.V.i(0,600)
 r.toString
-m.push(new T.cU(C.bc,D.ea(c,V.jo(M.c9(c,T.cJ(H.a([L.Sk(C.zJ,r,40)],p),C.U,C.M),c,c,75,c,c,75),a2,new X.cc(s,C.p)),C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2n(d),new U.a2o(d),c,c,c),c))
+m.push(new T.cU(C.bc,D.ea(c,V.jo(M.c9(c,T.cJ(H.a([L.Sk(C.zJ,r,40)],p),C.U,C.M),c,c,75,c,c,75),a1,new X.cc(s,C.p)),C.T,!1,c,c,c,c,c,c,c,c,c,c,c,c,new U.a2n(d),new U.a2o(d),c,c,c),c))
 m.push(T.eT(c,c,20))
-s=a4.a6(a1).f
-a2=a4.a6(a1).f
+s=a3.a6(a0).f
+a1=a3.a6(a0).f
 r=d.gm5()
-q=a4.a6(a1).f
-q=T.iw(r,new L.vK('    <!DOCTYPE html>\n    <html>\n      <head>\n\n        <script src="./modeler.js" type="module"></script>\n        <link rel="stylesheet" href="./modeler_style.css" type="text/css">\n\n      </head>\n      <body>\n\n        <canvas id="c">\n          Your browser doesn\'t support the HTML5 canvas element\n        </canvas>\n\n      </body>\n    </html>\n  ',C.h4,a4.a6(a1).f.a.a,q.a.b,new U.a2p(d),!0,c),c,c,0,0,0,c)
+q=a3.a6(a0).f
+q=T.iw(r,new L.vK('    <!DOCTYPE html>\n    <html>\n      <head>\n\n        <script src="./modeler.js" type="module"></script>\n        <link rel="stylesheet" href="./modeler_style.css" type="text/css">\n\n      </head>\n      <body>\n\n        <canvas id="c">\n          Your browser doesn\'t support the HTML5 canvas element\n        </canvas>\n\n      </body>\n    </html>\n  ',C.h4,a3.a6(a0).f.a.a,q.a.b,new U.a2p(d),!0,c),c,c,0,0,0,c)
 r=K.c2(30)
 o=H.a([new O.d1(0,P.aO(100,0,0,0),new P.t(0,3),7)],j)
-o=T.iw(c,T.cJ(H.a([M.c9(c,T.zW(K.c2(30),U.Br(60,new L.hR(b))),c,new S.cQ(c,c,c,r,o,c,C.N),60,c,c,c),T.eT(c,c,10),L.a_d(a,A.k8(c,c,P.kR(30,30,30,0.6),c,c,c,c,c,a0,c,c,35,c,C.cv,c,c,!0,c,c,c,c,c,c,c,c),c,c)],p),C.aF,C.M),c,c,30,c,30,c)
+o=T.iw(c,T.cJ(H.a([M.c9(c,T.zW(K.c2(30),U.Br(60,new L.hR("logo.png"))),c,new S.cQ(c,c,c,r,o,c,C.N),60,c,c,c),T.eT(c,c,10),L.a_d(b,A.k8(c,c,P.kR(30,30,30,0.6),c,c,c,c,c,a,c,c,35,c,C.cv,c,c,!0,c,c,c,c,c,c,c,c),c,c)],p),C.aF,C.M),c,c,30,c,30,c)
 r=d.gm5()
 n=d.gm5()
 k=H.a([new O.d1(0,P.aO(25,0,0,0),new P.t(0,-3),25)],j)
 if(d.go){i=T.eT(c,12,c)
 m=H.a([T.r3(H.a([T.cJ(m,C.aF,C.M)],p),C.bb,C.U)],p)
 h=P.aL([null,0],t.LO,t.S)
-m=T.r3(H.a([i,M.c9(c,new B.C_(new G.Zp(!0,!0,!0,m,h),c,C.o,!1,c,!1,new L.qO(c),!1,c,1,C.T,C.Eu,c,C.as,c),c,c,85,c,c,c),T.eT(c,5,c),d.GD(65,a4.a6(a1).f.a.a-50)],p),C.bb,C.aF)}else m=T.cJ(m,C.U,C.M)
+m=T.r3(H.a([i,M.c9(c,new B.C_(new G.Zp(!0,!0,!0,m,h),c,C.o,!1,c,!1,new L.qO(c),!1,c,1,C.T,C.Eu,c,C.as,c),c,c,85,c,c,c),T.eT(c,5,c),d.GD(65,a3.a6(a0).f.a.a-50)],p),C.bb,C.aF)}else m=T.cJ(m,C.U,C.M)
 r=T.iw(0,M.c9(c,m,c,new S.cQ(C.j,c,c,c,k,c,C.N),n,c,c,c),r,c,0,0,c,c)
 n=d.gm5()
 m=d.e
 m=m!=null?"v"+m.c+"+"+m.d:""
-m=H.a([q,o,r,T.iw(n+25,L.a_d(m,A.k8(c,c,P.aO(75,0,0,0),c,c,c,c,c,a0,c,c,20,c,C.bP,c,c,!0,c,c,c,c,c,c,c,c),c,c),c,c,c,30,c,c)],p)
+m=H.a([q,o,r,T.iw(n+25,L.a_d(m,A.k8(c,c,P.aO(75,0,0,0),c,c,c,c,c,a,c,c,20,c,C.bP,c,c,!0,c,c,c,c,c,c,c,c),c,c),c,c,c,30,c,c)],p)
 if(d.cx){r=d.gm5()
 q=K.c2(20)
 o=H.a([new O.d1(0,P.aO(100,0,0,0),new P.t(0,3),7)],j)
@@ -35393,15 +35393,15 @@ k=d.np(k[0],k[1],4)
 l=l[4]
 m.push(T.iw(r,new T.cU(C.iF,T.cJ(H.a([M.c9(c,T.cJ(H.a([T.r3(H.a([i,T.cJ(H.a([k,d.np(l[0],l[1],5)],p),C.aF,C.M)],p),C.bb,C.U)],p),C.U,C.M),c,new S.cQ(C.j,c,c,q,o,c,C.N),200,c,c,320)],p),C.U,C.M),c),c,c,0,0,c,c))}if(d.id){r=P.ca(0,250)
 q=d.k1
-o=a4.a6(a1).f
-a1=a4.a6(a1).f
+o=a3.a6(a0).f
+a0=a3.a6(a0).f
 n=P.anM(10,10)
 l=P.aO(C.d.aQ(178.5),255,255,255)
 k=K.c2(45)
 j=H.a([new O.d1(0,P.aO(100,0,0,0),new P.t(0,3),7)],j)
-j=M.c9(c,T.zW(K.c2(45),U.Br(120,new L.hR(b))),c,new S.cQ(c,c,c,k,j,c,C.N),150,c,c,c)
+j=M.c9(c,T.zW(K.c2(45),U.Br(120,new L.hR("assets/logo.png"))),c,new S.cQ(c,c,c,k,j,c,C.N),150,c,c,c)
 k=T.eT(c,20,c)
-i=L.a_d(a,A.k8(c,c,C.m,c,c,c,c,c,a0,c,c,35,c,C.cv,c,c,!0,c,c,c,c,c,c,c,c),c,c)
+i=L.a_d(b,A.k8(c,c,C.m,c,c,c,c,c,a,c,c,35,c,C.cv,c,c,!0,c,c,c,c,c,c,c,c),c,c)
 h=T.eT(c,20,c)
 g=C.fD.i(0,700)
 g.toString
@@ -35412,7 +35412,7 @@ e.toString
 f=H.a([e,C.o6],f)
 e=C.af.i(0,800)
 e.toString
-m.push(new G.qx(T.eT(T.ams(M.c9(c,T.r3(H.a([j,k,i,h,new Q.r9(180,50,L.a_d("Start to build!",A.k8(c,c,C.j,c,c,c,c,c,a0,c,c,20,c,C.cv,c,c,!0,c,c,c,c,c,c,c,c),c,c),new U.a2q(d),g,f,e,c)],p),C.bb,C.U),c,new S.cQ(l,c,c,c,c,c,C.N),c,c,c,c),n),a1.a.b,o.a.a),q,C.b9,r,c,c))}return new M.uC(T.eT(T.m0(C.bH,m,C.bl),s.a.b,a2.a.a),c)},
+m.push(new G.qx(T.eT(T.ams(M.c9(c,T.r3(H.a([j,k,i,h,new Q.r9(180,50,L.a_d("Start to build!",A.k8(c,c,C.j,c,c,c,c,c,a,c,c,20,c,C.cv,c,c,!0,c,c,c,c,c,c,c,c),c,c),new U.a2q(d),g,f,e,c)],p),C.bb,C.U),c,new S.cQ(l,c,c,c,c,c,C.N),c,c,c,c),n),a0.a.b,o.a.a),q,C.b9,r,c,c))}return new M.uC(T.eT(T.m0(C.bH,m,C.bl),s.a.b,a1.a.a),c)},
 Je(a){var s,r,q=this
 q.gcs().b.sq(0,!1)
 s=q.fx
